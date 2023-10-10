@@ -10,7 +10,7 @@ def get_known_faces():
         for face in os.listdir(f"known_faces/{known_face}"):
             curr_face = face_recognition.load_image_file(f"known_faces/{known_face}/{face}")
             curr_person_encoding.append(
-                face_recognition.face_encodings(curr_face)
+                face_recognition.face_encodings(curr_face)[0]
             )
         known_faces_encodings[known_face] = curr_person_encoding
         # print(known_face, len(curr_person_encoding))
@@ -39,5 +39,37 @@ def is_inside(rect1, rect2):
 
 
 def findPoint(x1, y1, x2, y2, x, y):
-    return x1 < x < x2 and y1 < y < y2
+    return (x > x1 and y > y1) and (x < x2 and y < y2)
+    # return x1 < x < x2 and y1 < y < y2
+
+
+def post_details(potential_match, match_time, checked_type):
+    # make api request with potential_match, its time and its checked_type
+    pass
+
+
+def get_snapshot_and_save():
+    name = input("Enter Name: ")
+    number_of_snapshots = 5
+
+    import cv2
+    cap = cv2.VideoCapture(0)
+
+    os.mkdir(f"known_faces/{name}")
+
+    while number_of_snapshots > 0:
+        ret, frame = cap.read()
+
+        cv2.imshow("frame", frame)
+        cv2.waitKey(1)
+        v = input("want to save? (0 - no / 1 - yes)")
+        if v == '1':
+            number_of_snapshots -= 1
+
+            cv2.imwrite(f"known_faces/{name}/image{number_of_snapshots}.jpg", frame)
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+
 
